@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #define   kDegreesToRadians(degrees)  ((pi * degrees)/ 180)
 @interface ViewController ()
-
+@property(nonatomic, strong)CAShapeLayer *aLayer;
 @end
 
 @implementation ViewController
@@ -27,8 +27,10 @@
 //    [self DrawSanJiaoView1];
 //    [self DrawSanJiaoView2];
 //    [self DrawSanJiaoView3];
-    [self drawQuXianView];
+  //  [self drawQuXianView];
     [self drawQuXian1];
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(timerStart) userInfo:nil repeats:YES];
+    [timer fire];
 }
 
 //三角形
@@ -156,15 +158,31 @@
 - (void)drawQuXian1
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
-    [path moveToPoint:CGPointMake(20, 400)];
-    [path addCurveToPoint:CGPointMake(100, 400) controlPoint1:CGPointMake(70, 200) controlPoint2:CGPointMake(70, 300)];
+    [path moveToPoint:CGPointMake(50, 400)];
+    [path addCurveToPoint:CGPointMake(self.view.frame.size.width - 50, 400) controlPoint1:CGPointMake(100, 200) controlPoint2:CGPointMake(200, 600)];
     path.lineCapStyle = kCGLineCapRound;
     path.lineJoinStyle = kCGLineJoinBevel;
-    CAShapeLayer *layer = [CAShapeLayer layer];
-    layer.path = path.CGPath;
-    layer.fillColor = [UIColor clearColor].CGColor;
-    layer.strokeColor = [UIColor redColor].CGColor;
-    layer.lineWidth = 1.0;
-    [self.view.layer addSublayer:layer];
+    _aLayer = [CAShapeLayer layer];
+    _aLayer.path = path.CGPath;
+    _aLayer.fillColor = [UIColor greenColor].CGColor;
+    _aLayer.strokeColor = [UIColor redColor].CGColor;
+    _aLayer.lineWidth = 1.0;
+    _aLayer.strokeStart = 0;
+    _aLayer.strokeEnd = 0;
+    [self.view.layer addSublayer:_aLayer];
+}
+- (void)timerStart
+{
+    if (self.aLayer.strokeStart < 1 && self.aLayer.strokeEnd > 1) {
+        self.aLayer.strokeStart += 0.1;
+    }else if(self.aLayer.strokeStart == 0 ){
+        self.aLayer.strokeEnd += 0.1;
+    }
+    if (self.aLayer.strokeEnd == 0) {
+        self.aLayer.strokeStart = 0;
+    }
+    if (self.aLayer.strokeStart == self.aLayer.strokeEnd) {
+        self.aLayer.strokeEnd = 0;
+    }
 }
 @end
